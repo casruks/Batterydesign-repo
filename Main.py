@@ -1,6 +1,24 @@
+import os
+import digikey
+from digikey.v3.productinformation import KeywordSearchRequest
 from py3dbp import Packer, Bin, Item     #used for optimal location  
 import numpy as np
 import math as m
+
+os.environ['DIGIKEY_CLIENT_ID'] = 'lapy0mAhGhAIlaOjNxBrAtrGBKNzF6b0'
+os.environ['DIGIKEY_CLIENT_SECRET'] = 'jUwqrqjz87HxqiYf'
+os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
+os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Dropbox\\Msc Space Engineering\\Q2\\(AE4S10) Microsat Engineering\\API Digikey tryout'
+
+# Query product number
+dkpn = '296-6501-1-ND'
+part = digikey.product_details(dkpn)
+
+# Search for parts 
+search_request = KeywordSearchRequest(keywords='CRCW080510K0FKEA', record_count=10)
+result = digikey.keyword_search(body=search_request)
+
+print(result)
 
 V_1 = 4.2   #initial voltage
 V_2 = 3     #final voltage
