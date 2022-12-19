@@ -2,6 +2,7 @@ import os
 import re
 import digikey
 import math as m
+from itertools import chain
 from digikey.v3.productinformation import KeywordSearchRequest
 from py3dbp import Packer, Bin, Item     #used for optimal location  
 
@@ -59,13 +60,13 @@ def ExtractData_D(sampleStr):
 
 Clst, Hlst, Wlst, Llst, Vlst, dkpnlst, n_reqlst, C_reqlst, filtered_results = ([] for i in range(9))
 
-x = int(2104/50)+1  #2104
+x = int(m.ceil(2104/50))  #2104
 y = 50
-for i in range(6,43): #43(x) times (y) results = 2106
+for i in range(43): #43(x) times (y) results = 2106
     search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y)
     result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
-    print(str(i) + '/' + str(x) + ' done..')
-    for i in range(x):
+    
+    for i in range(len(result.products)):
         C = float(result.products[i].parameters[12].value.strip(' mF'))
         
         # D, two values (rectangle) or Diam (cylinder)
@@ -103,7 +104,9 @@ for i in range(6,43): #43(x) times (y) results = 2106
                 filtered_results.append(dkpnlst) 
                 filtered_results.append(n_reqlst) 
                 filtered_results.append(C_reqlst)
-
+    print(str(i) + '/' + str(x) + ' done..')
+print('Total no of capacitors found =',result.products_count)
+print('No. of results after filter =', len(Clst))
 with open('Filtered_results.txt', 'w') as f:
     for line in filtered_results:
         f.write(f"{line}\n")
