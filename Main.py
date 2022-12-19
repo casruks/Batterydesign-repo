@@ -5,35 +5,58 @@ from py3dbp import Packer, Bin, Item     #used for optimal location
 import numpy as np
 import math as m
 import requests
+import json
 
-os.environ['DIGIKEY_CLIENT_ID'] = 'lapy0mAhGhAIlaOjNxBrAtrGBKNzF6b0'
-os.environ['DIGIKEY_CLIENT_SECRET'] = 'jUwqrqjz87HxqiYf'
+
+os.environ['DIGIKEY_CLIENT_ID'] = 'rGRVvZwhTTBu8LZrov7v6CbEoAlbuaRL'
+os.environ['DIGIKEY_CLIENT_SECRET'] = 'CEIUIRl5vQ2m4pV6'
 os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
-os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Dropbox\\Msc Space Engineering\\Q2\\(AE4S10) Microsat Engineering\\API Digikey tryout'
+os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Documents\\GitHub\\Batterydesign-repo\\tmp'
 
 # Query product number
-dkpn = '2085-PBLC-3R8/220MA2-ND'
-part = digikey.product_details(dkpn, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
+# dkpn = '2085-PBLC-3R8/220MA2-ND'
+# part = digikey.product_details(dkpn, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
 
-#Capacitor data
+# Capacitor data
 # part.parameters[1].value
-C = part.parameters[12].value
-D =part.parameters[3].value
-L = part.parameters[10].value
-V_n = part.parameters[13].value
-Operating_temp = part.parameters[5].value
+# C = part.parameters[12].value
+# D = part.parameters[3].value
+# L = part.parameters[10].value
+# V_n = part.parameters[13].value
+# Operating_temp = part.parameters[5].value
 
-print(C,D,L,V_n,Operating_temp)
-
-
-
-# Search for parts 
-search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=10)
+search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=20, record_start_position=0, filters=ParametricFilter(parameter_id=46,value_id='21491'))
 result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
+#result.products[nth product]
+# print(result.products[19].parameters)
+# g = result.products[19].parameters.index('{')
+print(result.products)
 
-with open('result.txt', 'w') as f:
-    f.write(str(result))
-    
+# print(C,D,L,V_n,Operating_temp)
+# resultlst = []
+# x = int(2104/8)  #2104
+# y = 8
+# for i in range(1): #54(x) times 39(y) results = 2106
+#     search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y, filters=ParametricFilter(parameter_id=2049,value_id='Capacitance'))
+#     result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
+#     print(str(i) + '/'+str(x)+' done..')
+#     resultlst.append(result)
+#     with open('Results\\result' + str(i) + '.txt', 'w') as f:
+#         f.write(str(result))
+          
+
+# with open('result.txt', 'w') as f:
+#     for i in range(len(resultlst)):
+#         if i == 0:
+#             f.write(str(resultlst[i]))
+#         else:
+#             f.write('\n'+'###'*24 + '\n' + str(resultlst[i]))
+            
+# for i in range(len(resultlst)):
+#     with open('Results\\result' + str(i) + '.txt', 'w') as f:
+#         f.write(str(resultlst[i]))
+      
+
 # V_1 = 4.2   #initial voltage
 # V_2 = 3     #final voltage
 
@@ -65,8 +88,8 @@ with open('result.txt', 'w') as f:
 # print('C_act =', C_act, 'F')
 # print('n_cap =', n_cap)
 
-# # my_bin = Bin(name, width, height, depth, max_weight)
-# # my_item = Item(name, width, height, depth, weight)
+# my_bin = Bin(name, width, height, depth, max_weight)
+# my_item = Item(name, width, height, depth, weight)
 # packer = Packer()
 # packer.add_bin(Bin('Battery case', H, W, L, 999999))
 
