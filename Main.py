@@ -14,23 +14,23 @@ os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
 os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Documents\\GitHub\\Batterydesign-repo\\tmp'
 
 # Query product number
-# dkpn = '2085-PBLC-3R8/220MA2-ND'
-# part = digikey.product_details(dkpn, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
+dkpn = '2085-PBLC-3R8/220MA2-ND'
+part = digikey.product_details(dkpn, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
 
 # Capacitor data
 # part.parameters[1].value
-# C = part.parameters[12].value
-# D = part.parameters[3].value
+C = part.parameters[12].value
+D = part.parameters[3].value
 # L = part.parameters[10].value
 # V_n = part.parameters[13].value
 # Operating_temp = part.parameters[5].value
-
-search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=20, record_start_position=0, filters=ParametricFilter(parameter_id=46,value_id='21491'))
-result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
+print(C)
+# search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=20, record_start_position=0, filters=ParametricFilter(parameter_id=46,value_id='21491'))
+# result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
 #result.products[nth product]
 # print(result.products[19].parameters)
 # g = result.products[19].parameters.index('{')
-print(result.products)
+# print(result.products[19].parameters[])
 
 # print(C,D,L,V_n,Operating_temp)
 # resultlst = []

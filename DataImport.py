@@ -28,9 +28,9 @@ for i in range(1): #54(x) times 39(y) results = 2106
     search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y, filters=ParametricFilter(parameter_id=2049,value_id='Capacitance'))
     result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
     print(str(i) + '/'+str(x)+' done..')
-    resultlst.append(result)
-    with open('Results\\result' + str(i) + '.txt', 'w') as f:
-        f.write(str(result))
+    # resultlst.append(result)
+    # with open('Results\\result' + str(i) + '.txt', 'w') as f:
+    #     f.write(str(result))
 
 obj = MyClass(result)
 save_object(obj)
