@@ -6,9 +6,9 @@ from digikey.v3.productinformation import KeywordSearchRequest
 from py3dbp import Packer, Bin, Item 
 
 ### Battery Parameters ###
-H_box = 60      #[mm]
-W_box = 60      #[mm]
-L_box = 60      #[mm]
+H_box = 60       #[mm]
+W_box = 42      #[mm]
+L_box = 42     #[mm]
 Ah = 600e-3     #[Ah]
 V = 3.7         #[V]
 s = 3600        #[sec]
@@ -88,54 +88,57 @@ Clst, Hlst, Wlst, Llst, Vlst, dkpnlst, n_reqlst, C_reqlst, filtered_results = ([
 
 x = int(m.ceil(2104/50))  #2104
 y = 50
-for i in range(43): #43(x) times (y) results = 2106
-    search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y)
-    result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR')
-    ist = i
-    for i in range(len(result.products)):
-        i_C, i_D, i_H, i_V = findIndex(i)
-        print(i_C, i_D, i_H, i_V)
-        if type(i_C) and type(i_D) and type(i_H) and type(i_V) == int(): ############
-            C = float(result.products[i].parameters[i_C].value.strip(' mF'))
-        
-            # D, two values (rectangle) or Diam (cylinder)
-            if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
-                L, W = ExtractData_D(result.products[i].parameters[i_D].value)          
+with open('TestC.txt', 'w') as f:
+    for i in range(43): #43(x) times (y) results = 2106
+        api_limit = {}
+        search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y)
+        result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR', api_limits=api_limit)
+        ist = i
+        for i in range(len(result.products)):
+            i_C, i_D, i_H, i_V = findIndex(i)
+            if type(i_C) and type(i_D) and type(i_H) and type(i_V) == type(1):
+                C = float(result.products[i].parameters[i_C].value.strip(' mF')) ###### FIX Req
+                print(C)
+                # D, two values (rectangle) or Diam (cylinder)
+                if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
+                    L, W = ExtractData_D(result.products[i].parameters[i_D].value)          
+                else:
+                    L = W = ExtractData_D(result.products[i].parameters[i_D].value) #cyl
+            
+                H = ExtractData_H(result.products[i].parameters[i_H].value)
+                V_n = float(result.products[i].parameters[i_V].value.strip(' V'))
+                dkpn = result.products[i].digi_key_part_number
+                C_req = 2*(E)/V_n**2
+                n_req = C_req / C
+                packer = Packer()
+                packer.add_bin(Bin('Battery case', H_box, W_box, L_box, 999999))
+                for i in range(m.ceil(n_req)):
+                    packer.add_item(Item('Capacitor' + str(i+1), H, W, L, 1+i))
+            
+                packer.pack()
+                for i in packer.bins:
+                    no_fitted = len(i.items)
+                    no_unfitted = len(i.unfitted_items)
+                    if no_fitted >= m.ceil(n_req):
+                        Clst.append(C)
+                        Hlst.append(H)
+                        Wlst.append(W)
+                        Llst.append(L)
+                        Vlst.append(V_n)
+                        dkpnlst.append(dkpn)
+                        n_reqlst.append(n_req) 
+                        C_reqlst.append(C_req) 
+                        filtered_results.append(Clst)  
+                        filtered_results.append(Llst) 
+                        filtered_results.append(Vlst) 
+                        filtered_results.append(dkpnlst) 
+                        filtered_results.append(n_reqlst) 
+                        filtered_results.append(C_reqlst)
+                f.write(f"{result}\n")
             else:
-                L = W = ExtractData_D(result.products[i].parameters[i_D].value) #cyl
-        
-            H = ExtractData_H(result.products[i].parameters[i_H].value)
-            V_n = float(result.products[i].parameters[i_V].value.strip(' V'))
-            dkpn = result.products[i].digi_key_part_number
-            C_req = 2*(E)/V_n**2
-            n_req = C_req / C
-            packer = Packer()
-            packer.add_bin(Bin('Battery case', H_box, W_box, L_box, 999999))
-            for i in range(m.ceil(n_req)):
-                packer.add_item(Item('Capacitor' + str(i+1), H, W, L, 1+i))
-        
-            packer.pack()
-            for i in packer.bins:
-                no_fitted = len(i.items)
-                no_unfitted = len(i.unfitted_items)
-                if no_fitted >= m.ceil(n_req):
-                    Clst.append(C)
-                    Hlst.append(H)
-                    Wlst.append(W)
-                    Llst.append(L)
-                    Vlst.append(V_n)
-                    dkpnlst.append(dkpn)
-                    n_reqlst.append(n_req) 
-                    C_reqlst.append(C_req) 
-                    filtered_results.append(Clst)  
-                    filtered_results.append(Llst) 
-                    filtered_results.append(Vlst) 
-                    filtered_results.append(dkpnlst) 
-                    filtered_results.append(n_reqlst) 
-                    filtered_results.append(C_reqlst)
-        else:
-            i += 1 
-    print(str(ist+1) + '/' + str(x) + ' done..')
+                i += 1 
+        print(str(ist+1) + '/' + str(x) + ' done..')
+        print(api_limit)
 
 print('Total no. of capacitors found =',result.products_count)
 print('No. of results after filter =', len(Clst))
