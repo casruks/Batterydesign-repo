@@ -29,7 +29,8 @@ H_box = 42       #[mm]
 W_box = 34      #[mm]
 L_box = 34     #[mm]
 
-C = 0.0115
+C = 0.22
+
 
 packer = Packer()
 packer.add_bin(Bin('Battery case', H_box, W_box, L_box, 999999))

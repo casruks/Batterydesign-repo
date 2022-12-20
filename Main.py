@@ -136,7 +136,7 @@ for i in range(43): #43(x) times (y) results = 2106
                         Llst.append(L)
                         Vlst.append(V_n)
                         dkpnlst.append(dkpn)
-                        n_reqlst.append(n_req) 
+                        n_reqlst.append(m.ceil(n_req))
                         C_reqlst.append(C_req) 
                         filtered_results.append(Clst)  
                         filtered_results.append(Llst) 
@@ -146,8 +146,8 @@ for i in range(43): #43(x) times (y) results = 2106
                         filtered_results.append(C_reqlst)
         else:
             i += 1
-    with open('Results/FilteredResults' + str(ist+1) + '.txt', 'w') as f:
-        f.write(f"{result}\n")        
+    with open('Results/FilteredResults.txt', 'w') as f:
+        f.write(f"{filtered_results}\n")        
     print(str(ist+1) + '/' + str(x) + ' done..')
     print("--- %s minutes ---" % round((time.time() - start_time)/60,2))
     print('Total estimated time required .. %s minutes' % round(x*(time.time() - start_time)/60,2))
