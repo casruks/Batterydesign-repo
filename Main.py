@@ -1,5 +1,6 @@
 import os
 import re
+import time
 import digikey
 import math as m
 from digikey.v3.productinformation import KeywordSearchRequest
@@ -96,6 +97,7 @@ x = int(m.ceil(2104/50))  #2104
 y = 50
 with open('TestC.txt', 'w') as f:
     for i in range(43): #43(x) times (y) results = 2106
+        start_time = time.time()
         api_limit = {}
         search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y)
         result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR', api_limits=api_limit)
@@ -144,6 +146,8 @@ with open('TestC.txt', 'w') as f:
             else:
                 i += 1 
         print(str(ist+1) + '/' + str(x) + ' done..')
+        print("--- %s minutes ---" % round((time.time() - start_time)/60,2))
+        print('Total estimated time required .. %s minutes' % round(x*(time.time() - start_time)/60,2))
         print(api_limit)
 
 print('Total no. of capacitors found =',result.products_count)
