@@ -109,7 +109,7 @@ for i in range(43): #43(x) times (y) results = 2106
     for i in range(len(result.products)):
         i_C, i_D, i_H, i_V = findIndex(i)
         if type(i_C) == type(1) and type(i_D) == type(1) and type(i_H) == type(1) and type(i_V) == type(1):
-            C = ExtractData_C(result.products[i].parameters[i_C].value) ###### FIX Req
+            C = ExtractData_C(result.products[i].parameters[i_C].value)
             if result.products[i].parameters[i_D].value != '-':
                 # D, two values (rectangle) or Diam (cylinder)
                 if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
