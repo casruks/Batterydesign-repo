@@ -6,9 +6,9 @@ from digikey.v3.productinformation import KeywordSearchRequest
 from py3dbp import Packer, Bin, Item 
 
 ### Battery Parameters ###
-H_box = 60       #[mm]
-W_box = 42      #[mm]
-L_box = 42     #[mm]
+H_box = 42       #[mm]
+W_box = 34      #[mm]
+L_box = 34     #[mm]
 Ah = 600e-3     #[Ah]
 V = 3.7         #[V]
 s = 3600        #[sec]
@@ -45,6 +45,12 @@ def findIndex(i):
         i_V = i_Vint
     return i_C, i_D, i_H, i_V
 
+def ExtractData_C(sampleStr): #distinguish between mF and F
+    if len(sampleStr.strip(' F')) == len(sampleStr.strip(' mF')):
+        C = float(sampleStr.strip(' F'))
+    else:
+        C = float(sampleStr.strip(' mF'))/1e3
+    return C
 
 #Definiton to extract string from data (applicable for D and L)
 def ExtractData_H(sampleStr):
@@ -97,7 +103,7 @@ with open('TestC.txt', 'w') as f:
         for i in range(len(result.products)):
             i_C, i_D, i_H, i_V = findIndex(i)
             if type(i_C) and type(i_D) and type(i_H) and type(i_V) == type(1):
-                C = float(result.products[i].parameters[i_C].value.strip(' mF')) ###### FIX Req
+                C = ExtractData_C(result.products[i].parameters[i_C].value) ###### FIX Req
                 print(C)
                 # D, two values (rectangle) or Diam (cylinder)
                 if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
