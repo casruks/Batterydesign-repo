@@ -45,13 +45,10 @@ def findIndex(i):
         i_V = i_Vint
     return i_C, i_D, i_H, i_V
 
-def trial(i):
-    for n in range(len(result.products[i].parameters)):
-        if result.products[i].parameters[n].parameter_id == 2049:
 
 #Definiton to extract string from data (applicable for D and L)
-def ExtractData_H(sampleStr): 
-    try :
+def ExtractData_H(sampleStr):
+    try:
         # here ( and ) are our two markers  #'1.654" (42.00mm)' -> 42.00mm
         # in which string can be found. 
         marker1 = '\('
