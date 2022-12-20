@@ -22,7 +22,7 @@ os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
 os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Documents\\GitHub\\Batterydesign-repo\\tmp'
 
 def findIndex(i):
-    i_Cint, i_Dint, i_Hint, i_Vint = (-1 for i in range(4))
+    i_Cint, i_Dint, i_Hint, i_Vint = ('x' for i in range(4))
     for n in range(len(result.products[i].parameters)):
         if result.products[i].parameters[n].parameter_id == 2049: #capacitance
             i_Cint = n
@@ -40,18 +40,20 @@ def findIndex(i):
             i_Vint = n
         else: 
             i_V = 'None found' #for i = 38 
-    if i_Cint and i_Dint and i_Hint and i_Vint != -1: 
+    if i_Cint and i_Dint and i_Hint and i_Vint != 'x': 
         i_C = i_Cint
         i_D = i_Dint
         i_H = i_Hint
         i_V = i_Vint
     return i_C, i_D, i_H, i_V
 
-def ExtractData_C(sampleStr): #distinguish between mF and F
-    if len(sampleStr.strip(' F')) == len(sampleStr.strip(' mF')):
-        C = float(sampleStr.strip(' F'))
+def ExtractData_C(sampleStr):
+    if sampleStr.find('µ') != -1:
+        C = float(sampleStr.strip(' µF'))*1e-6
+    elif sampleStr.find('m') != -1:
+        C = float(sampleStr.strip(' mF'))*1e-3
     else:
-        C = float(sampleStr.strip(' mF'))/1e3
+        C = float(sampleStr.strip(' F'))
     return C
 
 #Definiton to extract string from data (applicable for D and L)
@@ -105,21 +107,23 @@ for i in range(43): #43(x) times (y) results = 2106
     ist = i
     for i in range(len(result.products)):
         i_C, i_D, i_H, i_V = findIndex(i)
-        if type(i_C) and type(i_D) and type(i_H) and type(i_V) == type(1):
+        print(i_C, i_D, i_H, i_V)
+        if type(i_C) == type(1) and type(i_D) == type(1) and type(i_H) == type(1) and type(i_V) == type(1):
             C = ExtractData_C(result.products[i].parameters[i_C].value) ###### FIX Req
             print(C)
-            # D, two values (rectangle) or Diam (cylinder)
-            if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
-                L, W = ExtractData_D(result.products[i].parameters[i_D].value)          
-            else:
-                L = W = ExtractData_D(result.products[i].parameters[i_D].value) #cyl
+            if result.products[i].parameters[i_D].value != '-':
+                # D, two values (rectangle) or Diam (cylinder)
+                if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
+                    L, W = ExtractData_D(result.products[i].parameters[i_D].value)          
+                else:
+                    L = W = ExtractData_D(result.products[i].parameters[i_D].value) #cyl
         
             H = ExtractData_H(result.products[i].parameters[i_H].value)
             V_n = float(result.products[i].parameters[i_V].value.strip(' V'))
             dkpn = result.products[i].digi_key_part_number
             C_req = 2*(E)/V_n**2
             n_req = C_req / C
-            if m.ceil(n_req)*(L*W*H) <= (V_box):
+            if m.ceil(n_req)*(L*W*H) <= (V_box) and m.ceil(n_req) < 20:
                 packer = Packer()
                 packer.add_bin(Bin('Battery case', H_box, W_box, L_box, 999999))
                 for i in range(m.ceil(n_req)):
@@ -146,7 +150,7 @@ for i in range(43): #43(x) times (y) results = 2106
                         filtered_results.append(C_reqlst)
         else:
             i += 1
-    with open('Results/FilteredResults.txt', 'w') as f:
+    with open('FilteredResults.txt', 'w') as f:
         f.write(f"{filtered_results}\n")        
     print(str(ist+1) + '/' + str(x) + ' done..')
     print("--- %s minutes ---" % round((time.time() - start_time)/60,2))
