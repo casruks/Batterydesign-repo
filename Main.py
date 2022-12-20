@@ -2,7 +2,6 @@ import os
 import re
 import digikey
 import math as m
-from itertools import chain
 from digikey.v3.productinformation import KeywordSearchRequest
 from py3dbp import Packer, Bin, Item     #used for optimal location  
 
