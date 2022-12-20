@@ -16,8 +16,8 @@ V = 3.7                         #[V]
 s = 3600                        #[sec]
 E = Ah*V*s                      #[J]
 
-os.environ['DIGIKEY_CLIENT_ID'] = 'rGRVvZwhTTBu8LZrov7v6CbEoAlbuaRL'
-os.environ['DIGIKEY_CLIENT_SECRET'] = 'CEIUIRl5vQ2m4pV6'
+os.environ['DIGIKEY_CLIENT_ID'] = 'KAnyJA8SFWx30kxCstFM6cAKNF5HFSCx'
+os.environ['DIGIKEY_CLIENT_SECRET'] = 'AmnYGhMUfE08wm9M'
 os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
 os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Documents\\GitHub\\Batterydesign-repo\\tmp'
 
@@ -151,8 +151,7 @@ for i in range(43): #43(x) times (y) results = 2106
     with open('filtered_results.txt', 'w') as f:
         f.write(f"{filtered_results}\n")        
     print(str(ist+1) + '/' + str(x) + ' done..')
-    print("--- %s minutes ---" % round((time.time() - start_time)/60,2))
-    print('Total estimated time required .. %s minutes' % round(x*(time.time() - start_time)/60,2))
+    print("---", round((time.time() - start_time),2) ,"sec --- est. time req:", round(x*(time.time() - start_time),2), "sec ---")
     print(api_limit)
 
 print('Total no. of capacitors found =',result.products_count)
