@@ -7,13 +7,14 @@ from digikey.v3.productinformation import KeywordSearchRequest
 from py3dbp import Packer, Bin, Item 
 
 ### Battery Parameters ###
-H_box = 42       #[mm]
-W_box = 34      #[mm]
-L_box = 34     #[mm]
-Ah = 600e-3     #[Ah]
-V = 3.7         #[V]
-s = 3600        #[sec]
-E = Ah*V*s      #[J]
+H_box = 42                      #[mm]
+W_box = 34                      #[mm]
+L_box = 34                      #[mm]
+V_box = H_box * W_box * L_box   #[mm3]
+Ah = 600e-3                     #[Ah]
+V = 3.7                         #[V]
+s = 3600                        #[sec]
+E = Ah*V*s                      #[J]
 
 os.environ['DIGIKEY_CLIENT_ID'] = 'rGRVvZwhTTBu8LZrov7v6CbEoAlbuaRL'
 os.environ['DIGIKEY_CLIENT_SECRET'] = 'CEIUIRl5vQ2m4pV6'
@@ -95,29 +96,30 @@ Clst, Hlst, Wlst, Llst, Vlst, dkpnlst, n_reqlst, C_reqlst, filtered_results = ([
 
 x = int(m.ceil(2104/50))  #2104
 y = 50
-with open('TestC.txt', 'w') as f:
-    for i in range(43): #43(x) times (y) results = 2106
-        start_time = time.time()
-        api_limit = {}
-        search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y)
-        result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR', api_limits=api_limit)
-        ist = i
-        for i in range(len(result.products)):
-            i_C, i_D, i_H, i_V = findIndex(i)
-            if type(i_C) and type(i_D) and type(i_H) and type(i_V) == type(1):
-                C = ExtractData_C(result.products[i].parameters[i_C].value) ###### FIX Req
-                print(C)
-                # D, two values (rectangle) or Diam (cylinder)
-                if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
-                    L, W = ExtractData_D(result.products[i].parameters[i_D].value)          
-                else:
-                    L = W = ExtractData_D(result.products[i].parameters[i_D].value) #cyl
-            
-                H = ExtractData_H(result.products[i].parameters[i_H].value)
-                V_n = float(result.products[i].parameters[i_V].value.strip(' V'))
-                dkpn = result.products[i].digi_key_part_number
-                C_req = 2*(E)/V_n**2
-                n_req = C_req / C
+
+for i in range(43): #43(x) times (y) results = 2106
+    start_time = time.time()
+    api_limit = {}
+    search_request = KeywordSearchRequest(keywords='Electric Double Layer Capacitors (EDLC), Supercapacitors', record_count=y, record_start_position=0+i*y)
+    result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR', api_limits=api_limit)
+    ist = i
+    for i in range(len(result.products)):
+        i_C, i_D, i_H, i_V = findIndex(i)
+        if type(i_C) and type(i_D) and type(i_H) and type(i_V) == type(1):
+            C = ExtractData_C(result.products[i].parameters[i_C].value) ###### FIX Req
+            print(C)
+            # D, two values (rectangle) or Diam (cylinder)
+            if type(ExtractData_D(result.products[i].parameters[i_D].value)) == tuple:
+                L, W = ExtractData_D(result.products[i].parameters[i_D].value)          
+            else:
+                L = W = ExtractData_D(result.products[i].parameters[i_D].value) #cyl
+        
+            H = ExtractData_H(result.products[i].parameters[i_H].value)
+            V_n = float(result.products[i].parameters[i_V].value.strip(' V'))
+            dkpn = result.products[i].digi_key_part_number
+            C_req = 2*(E)/V_n**2
+            n_req = C_req / C
+            if m.ceil(n_req)*(L*W*H) <= (V_box):
                 packer = Packer()
                 packer.add_bin(Bin('Battery case', H_box, W_box, L_box, 999999))
                 for i in range(m.ceil(n_req)):
@@ -142,13 +144,14 @@ with open('TestC.txt', 'w') as f:
                         filtered_results.append(dkpnlst) 
                         filtered_results.append(n_reqlst) 
                         filtered_results.append(C_reqlst)
-                f.write(f"{result}\n")
-            else:
-                i += 1 
-        print(str(ist+1) + '/' + str(x) + ' done..')
-        print("--- %s minutes ---" % round((time.time() - start_time)/60,2))
-        print('Total estimated time required .. %s minutes' % round(x*(time.time() - start_time)/60,2))
-        print(api_limit)
+        else:
+            i += 1
+    with open('Results/FilteredResults' + str(ist+1) + '.txt', 'w') as f:
+        f.write(f"{result}\n")        
+    print(str(ist+1) + '/' + str(x) + ' done..')
+    print("--- %s minutes ---" % round((time.time() - start_time)/60,2))
+    print('Total estimated time required .. %s minutes' % round(x*(time.time() - start_time)/60,2))
+    print(api_limit)
 
 print('Total no. of capacitors found =',result.products_count)
 print('No. of results after filter =', len(Clst))
