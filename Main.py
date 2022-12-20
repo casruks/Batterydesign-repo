@@ -6,9 +6,9 @@ from digikey.v3.productinformation import KeywordSearchRequest
 from py3dbp import Packer, Bin, Item 
 
 ### Battery Parameters ###
-H_box = 42      #[mm]
-W_box = 34      #[mm]
-L_box = 33.8    #[mm]
+H_box = 60      #[mm]
+W_box = 60      #[mm]
+L_box = 60      #[mm]
 Ah = 600e-3     #[Ah]
 V = 3.7         #[V]
 s = 3600        #[sec]
@@ -20,24 +20,34 @@ os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
 os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Documents\\GitHub\\Batterydesign-repo\\tmp'
 
 def findIndex(i):
+    i_Cint, i_Dint, i_Hint, i_Vint = (-1 for i in range(4))
     for n in range(len(result.products[i].parameters)):
         if result.products[i].parameters[n].parameter_id == 2049: #capacitance
-            i_C = n
+            i_Cint = n
         else:
             i_C = 'None found'
         if result.products[i].parameters[n].parameter_id == 46: #size/dim
-            i_D = n
+            i_Dint = n
         else:
             i_D = 'None found'
         if result.products[i].parameters[n].parameter_id == 1500: #height
-            i_H = n
+            i_Hint = n
         else:
             i_H = 'None found'
         if result.products[i].parameters[n].parameter_id == 2079: #rated voltage
-            i_V = n
+            i_Vint = n
         else: 
             i_V = 'None found' #for i = 38 
+    if i_Cint and i_Dint and i_Hint and i_Vint != -1: 
+        i_C = i_Cint
+        i_D = i_Dint
+        i_H = i_Hint
+        i_V = i_Vint
     return i_C, i_D, i_H, i_V
+
+def trial(i):
+    for n in range(len(result.products[i].parameters)):
+        if result.products[i].parameters[n].parameter_id == 2049:
 
 #Definiton to extract string from data (applicable for D and L)
 def ExtractData_H(sampleStr): 
@@ -87,7 +97,8 @@ for i in range(43): #43(x) times (y) results = 2106
     ist = i
     for i in range(len(result.products)):
         i_C, i_D, i_H, i_V = findIndex(i)
-        if type(i_C) and type(i_D) and type(i_H) and type(i_V) == int():
+        print(i_C, i_D, i_H, i_V)
+        if type(i_C) and type(i_D) and type(i_H) and type(i_V) == int(): ############
             C = float(result.products[i].parameters[i_C].value.strip(' mF'))
         
             # D, two values (rectangle) or Diam (cylinder)
@@ -106,11 +117,11 @@ for i in range(43): #43(x) times (y) results = 2106
             for i in range(m.ceil(n_req)):
                 packer.add_item(Item('Capacitor' + str(i+1), H, W, L, 1+i))
         
-            # packer.pack()
+            packer.pack()
             for i in packer.bins:
                 no_fitted = len(i.items)
                 no_unfitted = len(i.unfitted_items)
-                if no_fitted == m.ceil(n_req):
+                if no_fitted >= m.ceil(n_req):
                     Clst.append(C)
                     Hlst.append(H)
                     Wlst.append(W)
