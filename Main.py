@@ -1,5 +1,6 @@
 import os
 import re
+import csv
 import time
 import digikey
 import math as m
@@ -94,10 +95,10 @@ def ExtractData_D(sampleStr):
         outp = float(str_found.strip('mm'))
     return outp
 
-Clst, Hlst, Wlst, Llst, Vlst, dkpnlst, n_reqlst, C_reqlst, filtered_results = ([] for i in range(9))
-
 x = int(m.ceil(2104/50))  #2104
 y = 50
+
+filtered_results = []
 
 for i in range(43): #43(x) times (y) results = 2106
     start_time = time.time()
@@ -121,38 +122,34 @@ for i in range(43): #43(x) times (y) results = 2106
             dkpn = result.products[i].digi_key_part_number
             C_req = 2*(E)/V_n**2
             n_req = C_req / C
+            URL = result.products[i].product_url
             if m.ceil(n_req)*(L*W*H) <= (V_box) and m.ceil(n_req) < 20:
                 packer = Packer()
                 packer.add_bin(Bin('Battery case', H_box, W_box, L_box, 999999))
-                for i in range(m.ceil(n_req)):
-                    packer.add_item(Item('Capacitor' + str(i+1), H, W, L, 1+i))
+                for j in range(m.ceil(n_req)):
+                    packer.add_item(Item('Capacitor' + str(j+1), H, W, L, 1+j))
             
                 packer.pack()
-                for i in packer.bins:
-                    no_fitted = len(i.items)
-                    no_unfitted = len(i.unfitted_items)
-                    if no_fitted >= m.ceil(n_req):
-                        Clst.append(C)
-                        Hlst.append(H)
-                        Wlst.append(W)
-                        Llst.append(L)
-                        Vlst.append(V_n)
-                        dkpnlst.append(dkpn)
-                        n_reqlst.append(m.ceil(n_req))
-                        C_reqlst.append(C_req) 
-                        filtered_results.append(Clst)  
-                        filtered_results.append(Llst) 
-                        filtered_results.append(Vlst) 
-                        filtered_results.append(dkpnlst) 
-                        filtered_results.append(n_reqlst) 
-                        filtered_results.append(C_reqlst)
+                for k in packer.bins:
+                    no_fitted = len(k.items)
+                    no_unfitted = len(k.unfitted_items)
+                if no_fitted >= m.ceil(n_req):
+                    lst = [C, H, W, L, V_n, dkpn, m.ceil(n_req), C_req, URL]
+                    data_lst = []
+                    for l in lst:
+                        data_lst.append(l)
+                    filtered_results.append(data_lst)
         else:
             i += 1
     with open('filtered_results.txt', 'w') as f:
         f.write(f"{filtered_results}\n")        
     print(str(ist+1) + '/' + str(x) + ' done..')
-    print("---", round((time.time() - start_time),2) ,"sec --- est. time req:", round(x*(time.time() - start_time),2), "sec ---")
+    print("---", round((time.time() - start_time),2) ,"sec --- est. time req:", round((x-ist)*(time.time() - start_time),2), "sec ---")
     print(api_limit)
+with open("filtered_results.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(['Capacitance [F]', 'Height [mm]', 'Width [mm]', 'Length [mm]', 'Voltage - Rated', 'digi-key part number', 'no. of capacitors req.', 'Capacitance req. [F]', 'Product URL'])
+    writer.writerows(filtered_results)
 
 print('Total no. of capacitors found =',result.products_count)
-print('No. of results after filter =', len(Clst))
+print('No. of results after filter =', len(filtered_results))
