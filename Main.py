@@ -3,16 +3,16 @@ import re
 import digikey
 import math as m
 from digikey.v3.productinformation import KeywordSearchRequest
-from py3dbp import Packer, Bin, Item     #used for optimal location  
+from py3dbp import Packer, Bin, Item 
 
-### Battery Dimensions in [mm] ###
-H_box = 42 
-W_box = 34
-L_box = 33.8
-Ah = 600e-3
-V = 3.7
-s = 3600
-E = Ah*V*s
+### Battery Parameters ###
+H_box = 42      #[mm]
+W_box = 34      #[mm]
+L_box = 33.8    #[mm]
+Ah = 600e-3     #[Ah]
+V = 3.7         #[V]
+s = 3600        #[sec]
+E = Ah*V*s      #[J]
 
 os.environ['DIGIKEY_CLIENT_ID'] = 'rGRVvZwhTTBu8LZrov7v6CbEoAlbuaRL'
 os.environ['DIGIKEY_CLIENT_SECRET'] = 'CEIUIRl5vQ2m4pV6'
@@ -129,7 +129,7 @@ for i in range(43): #43(x) times (y) results = 2106
             i += 1 
     print(str(ist+1) + '/' + str(x) + ' done..')
 
-print('Total no of capacitors found =',result.products_count)
+print('Total no. of capacitors found =',result.products_count)
 print('No. of results after filter =', len(Clst))
 with open('Filtered_results.txt', 'w') as f:
     for line in filtered_results:
