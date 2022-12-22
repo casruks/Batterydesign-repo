@@ -17,11 +17,10 @@ V = 3.7                         #[V]
 s = 3600                        #[sec]
 E = Ah*V*s                      #[J]
 
-os.environ['DIGIKEY_CLIENT_ID'] = 'KAnyJA8SFWx30kxCstFM6cAKNF5HFSCx'
-os.environ['DIGIKEY_CLIENT_SECRET'] = 'AmnYGhMUfE08wm9M'
+os.environ['DIGIKEY_CLIENT_ID'] = 'client id here'
+os.environ['DIGIKEY_CLIENT_SECRET'] = 'client secret here'
 os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
-os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Documents\\GitHub\\Batterydesign-repo\\tmp'
-
+os.environ['DIGIKEY_STORAGE_PATH'] = '~\\GitHub\\Batterydesign-repo\\tmp'
 def findIndex(i):
     i_Cint, i_Dint, i_Hint, i_Vint = ('x' for i in range(4))
     for n in range(len(result.products[i].parameters)):
