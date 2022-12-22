@@ -16,7 +16,7 @@ Microsatellite Engineering - II.1 Battery design project
    * Add a 'Production App' and set 'OAuth Callback' to ``` https://localhost:8139/digikey_callback ``` ;
    * Select 'Product Information' and save ;
    * Click on the project name and copy the clent_id and secret_id.
-4. Specify the client_id, client_secret and a storage path (this is where the token_storage.json will be stored each session) as seen here:
+4. Specify the client_id, client_secret and a storage path (this is where the token_storage.json will be stored each session) --- all as a string --- as seen here:
 
 ```
 import os
