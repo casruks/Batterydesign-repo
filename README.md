@@ -16,7 +16,7 @@ Microsatellite Engineering - II.1 Battery design project
    * Add a 'Production App' and set 'OAuth Callback' to ``` https://localhost:8139/digikey_callback ``` ;
    * Select 'Product Information' and save ;
    * Click on the project name and copy the clent_id and secret_id.
-4. Specify the client_id, client_secret and a storage path as seen here:
+4. Specify the client_id, client_secret and a storage path (this is where the token_storage.json will be stored each session) as seen here:
 
 ```
 import os
@@ -44,4 +44,9 @@ os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
 os.environ['DIGIKEY_STORAGE_PATH'] = '~\\GitHub\\Batterydesign-repo\\tmp'
 ```
 
-Please refer to [digikey-api]{https://github.com/peeter123/digikey-api} and [py3dbp]{https://github.com/enzoruiz/3dbinpacking} for additional details regarding the digikey api for python and py3dbp package.
+After specifiying the client_id, client_secret and storage path correctly a browswer window should pop up, click on **Advanced...** and **Accept the Risk and Continue**. This is the https://localhost:8139/digikey_callback that you will see after each initally installation of a new product, you should not see it afterwards.
+![This is an image]([https://myoctocat.com/assets/images/base-octocat.svg](https://i.imgur.com/hfGojmW.png))
+
+
+Please refer to [digikey-api](https://github.com/peeter123/digikey-api) and [py3dbp](https://github.com/enzoruiz/3dbinpacking) for additional details regarding the digikey api for python and py3dbp package.
+
