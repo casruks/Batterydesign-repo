@@ -44,7 +44,7 @@ os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
 os.environ['DIGIKEY_STORAGE_PATH'] = '~\\GitHub\\Batterydesign-repo\\tmp'
 ```
 
-After specifiying the client_id, client_secret and storage path correctly, and running Main.pt, a browswer window should pop up, click on **Advanced...** and **Accept the Risk and Continue**. This is the https://localhost:8139/digikey_callback that you will only see after each fresh installation of a new api product. After continuing you should see a windows as follows: 
+After specifiying the client_id, client_secret and storage path correctly, and running Main.py, a browswer window should pop up, click on **Advanced...** and **Accept the Risk and Continue**. This is the https://localhost:8139/digikey_callback that you will only see after each fresh installation of a new api product. After continuing you should see a windows as follows: 
 
 ![a](https://i.imgur.com/phhkTWr.png)
 
