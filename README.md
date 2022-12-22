@@ -45,7 +45,7 @@ os.environ['DIGIKEY_STORAGE_PATH'] = '~\\GitHub\\Batterydesign-repo\\tmp'
 ```
 
 After specifiying the client_id, client_secret and storage path correctly a browswer window should pop up, click on **Advanced...** and **Accept the Risk and Continue**. This is the https://localhost:8139/digikey_callback that you will see after each fresh installation of a new api product, you should not see it when running it a second time.
-![This is an image]([https://myoctocat.com/assets/images/base-octocat.svg](https://i.imgur.com/hfGojmW.png))
+![a](https://i.imgur.com/hfGojmW.png))
 
 
 Please refer to [digikey-api](https://github.com/peeter123/digikey-api) and [py3dbp](https://github.com/enzoruiz/3dbinpacking) for additional details regarding the digikey api for python and py3dbp package.
