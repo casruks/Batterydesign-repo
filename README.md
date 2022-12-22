@@ -44,7 +44,7 @@ os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
 os.environ['DIGIKEY_STORAGE_PATH'] = '~\\GitHub\\Batterydesign-repo\\tmp'
 ```
 
-After specifiying the client_id, client_secret and storage path correctly a browswer window should pop up, click on **Advanced...** and **Accept the Risk and Continue**. This is the https://localhost:8139/digikey_callback that you will see after each initally installation of a new product, you should not see it afterwards.
+After specifiying the client_id, client_secret and storage path correctly a browswer window should pop up, click on **Advanced...** and **Accept the Risk and Continue**. This is the https://localhost:8139/digikey_callback that you will see after each fresh installation of a new api product, you should not see it when running it a second time.
 ![This is an image]([https://myoctocat.com/assets/images/base-octocat.svg](https://i.imgur.com/hfGojmW.png))
 
 
