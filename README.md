@@ -1,4 +1,4 @@
-Python Program to filter digi-key's capacitors for Microsattellite Engineering Project 
+API implementation Microsattellite Engineering Project 
 =================================
 Microsatellite Engineering - II.1 Battery design project
 
