@@ -17,36 +17,41 @@ V = 3.7                         #[V]
 s = 3600                        #[sec]
 E = Ah*V*s                      #[J]
 
-os.environ['DIGIKEY_CLIENT_ID'] = 'KAnyJA8SFWx30kxCstFM6cAKNF5HFSCx'
-os.environ['DIGIKEY_CLIENT_SECRET'] = 'AmnYGhMUfE08wm9M'
+os.environ['DIGIKEY_CLIENT_ID'] = 'client id here'
+os.environ['DIGIKEY_CLIENT_SECRET'] = 'client secret here'
 os.environ['DIGIKEY_CLIENT_SANDBOX'] = 'False'
-os.environ['DIGIKEY_STORAGE_PATH'] = 'C:\\Users\\casru\\Documents\\GitHub\\Batterydesign-repo\\tmp'
+os.environ['DIGIKEY_STORAGE_PATH'] = '~\\GitHub\\Batterydesign-repo\\tmp'
 
 def findIndex(i):
-    i_Cint, i_Dint, i_Hint, i_Vint = ('x' for i in range(4))
+    i_Cint, i_Dint, i_Hint, i_Vint, i_Tint = ('x' for i in range(5))
     for n in range(len(result.products[i].parameters)):
-        if result.products[i].parameters[n].parameter_id == 2049: #capacitance
+        if result.products[i].parameters[n].parameter_id == 2049:   #capacitance
             i_Cint = n
         else:
             i_C = 'None found'
-        if result.products[i].parameters[n].parameter_id == 46: #size/dim
+        if result.products[i].parameters[n].parameter_id == 46:     #size/dim
             i_Dint = n
         else:
             i_D = 'None found'
-        if result.products[i].parameters[n].parameter_id == 1500: #height
+        if result.products[i].parameters[n].parameter_id == 1500:   #height
             i_Hint = n
         else:
             i_H = 'None found'
-        if result.products[i].parameters[n].parameter_id == 2079: #rated voltage
+        if result.products[i].parameters[n].parameter_id == 2079:   #rated voltage
             i_Vint = n
         else: 
             i_V = 'None found' #for i = 38 
-    if i_Cint and i_Dint and i_Hint and i_Vint != 'x': 
+        if result.products[i].parameters[n].parameter_id == 252:     #operating Temperature
+            i_Tint = n
+        else:
+            i_T = 'None found'
+    if i_Cint and i_Dint and i_Hint and i_Vint and i_Tint != 'x': 
         i_C = i_Cint
         i_D = i_Dint
         i_H = i_Hint
         i_V = i_Vint
-    return i_C, i_D, i_H, i_V
+        i_T = i_Tint
+    return i_C, i_D, i_H, i_V, i_T
 
 def ExtractData_C(sampleStr):
     if sampleStr.find('µ') != -1:
@@ -107,7 +112,7 @@ for i in range(43): #43(x) times (y) results = 2106
     result = digikey.keyword_search(body=search_request, x_digikey_locale_site='NL', x_digikey_locale_currency='EUR', api_limits=api_limit)
     ist = i
     for i in range(len(result.products)):
-        i_C, i_D, i_H, i_V = findIndex(i)
+        i_C, i_D, i_H, i_V, i_T = findIndex(i)
         if type(i_C) == type(1) and type(i_D) == type(1) and type(i_H) == type(1) and type(i_V) == type(1):
             C = ExtractData_C(result.products[i].parameters[i_C].value)
             if result.products[i].parameters[i_D].value != '-':
@@ -123,6 +128,7 @@ for i in range(43): #43(x) times (y) results = 2106
             C_req = 2*(E)/V_n**2
             n_req = C_req / C
             URL = result.products[i].product_url
+            tmpRange = result.products[i].parameters[i_T].value
             if m.ceil(n_req)*(L*W*H) <= (V_box) and m.ceil(n_req) < 20:
                 packer = Packer()
                 packer.add_bin(Bin('Battery case', H_box, W_box, L_box, 999999))
@@ -134,7 +140,7 @@ for i in range(43): #43(x) times (y) results = 2106
                     no_fitted = len(k.items)
                     no_unfitted = len(k.unfitted_items)
                 if no_fitted >= m.ceil(n_req):
-                    lst = [C, H, W, L, V_n, dkpn, m.ceil(n_req), C_req, URL]
+                    lst = [C, H, W, L, V_n, dkpn, m.ceil(n_req), C_req, tmpRange, URL]
                     data_lst = []
                     for l in lst:
                         data_lst.append(l)
@@ -148,7 +154,7 @@ for i in range(43): #43(x) times (y) results = 2106
     print(api_limit)
 with open("filtered_results.csv", "w", newline="") as f:
     writer = csv.writer(f)
-    writer.writerow(['Capacitance [F]', 'Height [mm]', 'Width [mm]', 'Length [mm]', 'Voltage - Rated', 'digi-key part number', 'no. of capacitors req.', 'Capacitance req. [F]', 'Product URL'])
+    writer.writerow(['Capacitance [F]', 'Height [mm]', 'Width [mm]', 'Length [mm]', 'Voltage - Rated', 'digi-key part number', 'no. of capacitors req.', 'Capacitance req. [F]', 'Operating Temperature', 'Product URL'])
     writer.writerows(filtered_results)
 
 print('Total no. of capacitors found =',result.products_count)
