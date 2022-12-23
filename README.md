@@ -1,4 +1,4 @@
-API implementation Microsattellite Engineering Project 
+API implementation Microsatellite Engineering Project 
 =================================
 Microsatellite Engineering - II.1 Battery design project
 
